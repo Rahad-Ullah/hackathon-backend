@@ -1,28 +1,31 @@
-# Memory — NestJS Prisma Infrastructure Setup
+# Memory — Better Auth NestJS Integration
 
-Last updated: 2026-08-13T06:07:00+06:00
+Last updated: 2026-08-13T06:53:00+06:00
 
 ## What was built
 
-- Resolved Prisma 7 `PrismaClientInitializationError` by installing `@prisma/adapter-pg` and `pg`.
-- Updated `src/lib/database/prisma.service.ts` to instantiate `PrismaPg` pool adapter and pass `{ adapter }` to `super({ adapter })`.
-- Fixed `prisma/schema.prisma` for Prisma 7 compatibility (`provider = "prisma-client-js"`, URL managed via `prisma.config.ts`).
-- Created `@Global()` infrastructure module `src/lib/database/prisma.module.ts` exported and imported into `AppModule`.
-- Verified `npm run build` and server startup cleanly with no driver adapter errors.
+- Installed `@thallesp/nestjs-better-auth` and `better-auth`.
+- Disabled NestJS default body parser (`bodyParser: false`) in [src/main.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/main.ts).
+- Configured Better Auth server instance with Prisma adapter and custom `role` field (defaulting to `"participant"`, settable during signup) in [src/lib/auth/auth.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/lib/auth/auth.ts).
+- Created global infrastructure [src/lib/auth/auth.module.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/lib/auth/auth.module.ts) wrapping `AuthModule.forRoot({ auth })` and registered it in [src/app.module.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/app.module.ts).
+- Updated [prisma/schema.prisma](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/prisma/schema.prisma) with Better Auth models (`user`, `session`, `account`, `verification`) and user `role` column.
+- Ran `npx prisma generate` and applied DB migration `20260813005237_init_better_auth`.
+- Created sample [src/module/user/user.controller.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/module/user/user.controller.ts) using `import type { UserSession }` for decorated parameter signatures (preventing TS1272 runtime decorator metadata errors).
+- Verified `npm run build` passes with zero errors.
 
 ## Decisions made
 
-- Configured `PrismaService` with `@prisma/adapter-pg` driver adapter required by Prisma 7.
-- Enforced NestJS dependency injection architecture (`src/lib/database/prisma.module.ts`).
+- `UserSession` imported as `import type { UserSession }` in decorated controller routes to comply with `emitDecoratorMetadata` & `isolatedModules`.
+- `role` field configured via `additionalFields` on `betterAuth({ user: { additionalFields: { role: { defaultValue: 'participant', input: true } } } })`.
 
 ## Current state
 
-- NestJS server initializes `PrismaModule` cleanly without initialization errors.
+- Project compiles cleanly (`npm run build`), DB migration applied to Neon PostgreSQL, and server is ready for dev execution.
 
 ## Next session starts with
 
-- Define feature models in `prisma/schema.prisma` and create domain feature modules in `src/module/<name>/`.
+- Expand user management and add client auth hooks or auth endpoint testing.
 
 ## Open questions
 
-- Which feature module or entity should be constructed first?
+- None.
