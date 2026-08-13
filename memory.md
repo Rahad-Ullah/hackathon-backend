@@ -1,31 +1,28 @@
-# Memory — Initial Project Setup
+# Memory — NestJS Prisma Infrastructure Setup
 
-Last updated: 2026-08-11T23:13:00+06:00
+Last updated: 2026-08-13T06:07:00+06:00
 
 ## What was built
 
-- Configured project rules and architecture constraints in [AGENTS.md](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/AGENTS.md).
-- Installed and organized skills in `.agents/skills/`: `architect`, `recover`, `remember`, `review`, and `find-skills`.
+- Resolved Prisma 7 `PrismaClientInitializationError` by installing `@prisma/adapter-pg` and `pg`.
+- Updated `src/lib/database/prisma.service.ts` to instantiate `PrismaPg` pool adapter and pass `{ adapter }` to `super({ adapter })`.
+- Fixed `prisma/schema.prisma` for Prisma 7 compatibility (`provider = "prisma-client-js"`, URL managed via `prisma.config.ts`).
+- Created `@Global()` infrastructure module `src/lib/database/prisma.module.ts` exported and imported into `AppModule`.
+- Verified `npm run build` and server startup cleanly with no driver adapter errors.
 
 ## Decisions made
 
-- NestJS 11 backend with Express adapter.
-- Enforced NestJS dependency injection patterns (no manual instantiation).
-- Standardized module architecture: infrastructure modules in `src/lib/` marked `@Global()`, feature modules in `src/module/<name>/`, shared utilities in `src/common/`.
-
-## Problems solved
-
-- Setup session continuity and skill discovery workspace.
+- Configured `PrismaService` with `@prisma/adapter-pg` driver adapter required by Prisma 7.
+- Enforced NestJS dependency injection architecture (`src/lib/database/prisma.module.ts`).
 
 ## Current state
 
-- Project configuration and skill infrastructure established.
-- Backend code implementation not started yet.
+- NestJS server initializes `PrismaModule` cleanly without initialization errors.
 
 ## Next session starts with
 
-- Define and implement the initial NestJS feature module or database integration.
+- Define feature models in `prisma/schema.prisma` and create domain feature modules in `src/module/<name>/`.
 
 ## Open questions
 
-- What domain or core API endpoints need to be built first?
+- Which feature module or entity should be constructed first?
