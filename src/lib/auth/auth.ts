@@ -1,29 +1,37 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import type { PrismaService } from '../database/prisma.service';
 
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: 'postgresql',
-  }),
-  user: {
-    additionalFields: {
-      role: {
-        type: 'string',
-        required: false,
-        defaultValue: 'participant',
-        input: true,
+export function createAuth(prisma: PrismaService) {
+  return betterAuth({
+    database: prismaAdapter(prisma, {
+      provider: 'postgresql',
+    }),
+    user: {
+      additionalFields: {
+        role: {
+          type: 'string',
+          required: false,
+          defaultValue: 'participant',
+          input: true,
+        },
       },
     },
-  },
-  emailAndPassword: {
-    enabled: true,
-  },
-});
+    emailAndPassword: {
+      enabled: true,
+      requireEmailVerification: false,
+      async sendResetPassword({ user, url, token }) {
+        console.log(`[BetterAuth] Password Reset email requested for ${user.email}. URL: ${url}, Token: ${token}`);
+      },
+    },
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      async sendVerificationEmail({ user, url, token }) {
+        console.log(`[BetterAuth] Email verification requested for ${user.email}. URL: ${url}, Token: ${token}`);
+      },
+    },
+  });
+}
+
+export type BetterAuthInstance = ReturnType<typeof createAuth>;
