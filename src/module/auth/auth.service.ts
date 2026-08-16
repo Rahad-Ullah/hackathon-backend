@@ -52,7 +52,7 @@ export class AuthService {
         ...this.getOptions(headers),
       });
 
-      return response.response;
+      return response;
     } catch (error: any) {
       this.logger.error(`SignIn failed: ${error.message}`, error.stack);
       throw new UnauthorizedException(error.message || 'Invalid email or password');

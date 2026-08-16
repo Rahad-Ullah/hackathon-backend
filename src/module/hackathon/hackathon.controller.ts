@@ -18,7 +18,7 @@ import { HackathonService } from './hackathon.service';
 @Controller('hackathons')
 @UseGuards(RolesGuard)
 export class HackathonController {
-  constructor(private readonly hackathonService: HackathonService) {}
+  constructor(private readonly hackathonService: HackathonService) { }
 
   @Post()
   @Roles('admin')
@@ -28,6 +28,13 @@ export class HackathonController {
     @Body() createHackathonDto: CreateHackathonDto,
   ) {
     return this.hackathonService.create(session.user.id, createHackathonDto);
+  }
+
+  @Post(':id/join')
+  @Roles('participant')
+  @ResponseMessage('Successfully joined the hackathon')
+  async join(@Param('id') id: string, @Session() session: UserSession) {
+    return this.hackathonService.join(id, session.user.id);
   }
 
   @Get()

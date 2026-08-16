@@ -1,31 +1,33 @@
-# Memory — Role-Based Access Control on Hackathon Endpoints
+# Memory — Hackathon Participant Join Endpoint
 
-Last updated: 2026-08-16T17:13:00+06:00
+Last updated: 2026-08-16T19:12:00+06:00
 
 ## What was built
 
-- Created RBAC decorator [src/common/decorators/roles.decorator.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/common/decorators/roles.decorator.ts) (`@Roles(...roles)`).
-- Created RBAC guard [src/common/guards/roles.guard.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/common/guards/roles.guard.ts) (`RolesGuard` checking `user.role` against metadata).
-- Updated [src/common/index.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/common/index.ts) re-exporting `Roles` and `RolesGuard`.
-- Updated [src/module/hackathon/hackathon.controller.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/module/hackathon/hackathon.controller.ts):
-  - Applied `@UseGuards(RolesGuard)` to the controller.
-  - `@Roles('admin')` enforced on write endpoints (`POST /hackathons`, `PATCH /hackathons/:id`, `DELETE /hackathons/:id`).
-  - Read access available to all via `@AllowAnonymous()` on `GET /hackathons` and `GET /hackathons/:id`.
-- Verified `npm run build` compiles cleanly with zero errors.
+- Implemented `join(id, userId)` in [src/module/hackathon/hackathon.service.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/module/hackathon/hackathon.service.ts):
+  - Validates hackathon existence (via `findOne`).
+  - Ensures `isActive` is `true` (throws `BadRequestException` if inactive).
+  - Ensures current date does not exceed `endDate` (throws `BadRequestException` if ended).
+  - Creates `HackathonParticipant` record.
+  - Catches Prisma unique constraint error `P2002` and throws `ConflictException('You have already joined this hackathon')`.
+- Added `POST /hackathons/:id/join` endpoint in [src/module/hackathon/hackathon.controller.ts](file:///c:/Users/RAHAD/OneDrive/Projects/hackathon/src/module/hackathon/hackathon.controller.ts):
+  - Enforced `@Roles('participant')` access control.
+  - Annotated with `@ResponseMessage('Successfully joined the hackathon')`.
+- Verified `npm run build` passes cleanly with zero errors.
 
 ## Decisions made
 
-- Reusable `RolesGuard` and `@Roles` decorator created in `src/common/` to follow `AGENTS.md` guidelines.
-- `admin` role required for write operations; public read access preserved for all users.
+- Unique constraint handling managed via Prisma error code `P2002` mapped to NestJS `ConflictException`.
+- Restricted endpoint to `participant` role via `@Roles('participant')`.
 
 ## Current state
 
-- Role-based access control active on Hackathon endpoints.
+- Hackathon join API operational with validation checks and duplicate prevention.
 - `npm run build` succeeds cleanly.
 
 ## Next session starts with
 
-- Add unit/integration tests for RBAC guard and hackathon controller or implement participant features.
+- Implement submission or team logic for hackathons if required.
 
 ## Open questions
 

@@ -54,8 +54,14 @@ export class AuthController {
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
   @ResponseMessage('Login successful')
-  async signIn(@Body() dto: SignInDto, @Req() req: Request) {
-    return this.authService.signIn(dto, this.extractHeaders(req));
+  async signIn(
+    @Body() dto: SignInDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.signIn(dto, this.extractHeaders(req));
+    this.applyHeaders(res, result.headers);
+    return result.response;
   }
 
   @Post('sign-out')
