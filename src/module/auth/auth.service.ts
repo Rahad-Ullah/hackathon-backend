@@ -34,13 +34,7 @@ export class AuthService {
         ...this.getOptions(headers),
       });
 
-      return {
-        data: {
-          message: 'User registered successfully',
-          ...response.response,
-        },
-        headers: response.headers,
-      };
+      return response;
     } catch (error: any) {
       this.logger.error(`SignUp failed: ${error.message}`, error.stack);
       throw new BadRequestException(error.message || 'Registration failed');
@@ -58,10 +52,7 @@ export class AuthService {
         ...this.getOptions(headers),
       });
 
-      return {
-        message: 'Login successful',
-        data: response,
-      };
+      return response.response;
     } catch (error: any) {
       this.logger.error(`SignIn failed: ${error.message}`, error.stack);
       throw new UnauthorizedException(error.message || 'Invalid email or password');
@@ -87,10 +78,7 @@ export class AuthService {
         },
         ...this.getOptions(headers),
       });
-      return {
-        message: 'Email verified successfully',
-        data: response,
-      };
+      return response;
     } catch (error: any) {
       this.logger.error(`VerifyEmail failed: ${error.message}`, error.stack);
       throw new BadRequestException(error.message || 'Email verification failed');
@@ -106,10 +94,7 @@ export class AuthService {
         },
         ...this.getOptions(headers),
       });
-      return {
-        message: 'Password reset email requested',
-        data: response,
-      };
+      return response;
     } catch (error: any) {
       this.logger.error(`ForgetPassword failed: ${error.message}`, error.stack);
       throw new BadRequestException(error.message || 'Password reset request failed');
@@ -125,10 +110,7 @@ export class AuthService {
         },
         ...this.getOptions(headers),
       });
-      return {
-        message: 'Password reset successfully',
-        data: response,
-      };
+      return response;
     } catch (error: any) {
       this.logger.error(`ResetPassword failed: ${error.message}`, error.stack);
       throw new BadRequestException(error.message || 'Password reset failed');

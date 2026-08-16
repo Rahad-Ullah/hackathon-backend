@@ -8,6 +8,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ResponseMessage } from 'src/common';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,7 @@ export class AuthController {
   @Post('sign-up')
   @AllowAnonymous()
   @HttpCode(HttpStatus.CREATED)
+  @ResponseMessage('User registered successfully')
   async signUp(
     @Body() dto: SignUpDto,
     @Req() req: Request,
@@ -45,18 +47,20 @@ export class AuthController {
   ) {
     const result = await this.authService.signUp(dto, this.extractHeaders(req));
     this.applyHeaders(res, result.headers);
-    return result.data;
+    return result.response;
   }
 
   @Post('login')
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Login successful')
   async signIn(@Body() dto: SignInDto, @Req() req: Request) {
     return this.authService.signIn(dto, this.extractHeaders(req));
   }
 
   @Post('sign-out')
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Sign out successful')
   async signOut(@Req() req: Request) {
     return this.authService.signOut(this.extractHeaders(req));
   }
@@ -64,6 +68,7 @@ export class AuthController {
   @Post('verify-email')
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Email verified successfully')
   async verifyEmail(@Body() dto: VerifyEmailDto, @Req() req: Request) {
     return this.authService.verifyEmail(dto, this.extractHeaders(req));
   }
@@ -71,6 +76,7 @@ export class AuthController {
   @Post('forget-password')
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Forget password email sent successfully')
   async forgetPassword(@Body() dto: ForgetPasswordDto, @Req() req: Request) {
     return this.authService.forgetPassword(dto, this.extractHeaders(req));
   }
@@ -78,6 +84,7 @@ export class AuthController {
   @Post('reset-password')
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('Reset password successful')
   async resetPassword(@Body() dto: ResetPasswordDto, @Req() req: Request) {
     return this.authService.resetPassword(dto, this.extractHeaders(req));
   }
