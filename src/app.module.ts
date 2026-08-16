@@ -8,6 +8,7 @@ import { MailModule } from './lib/mail/mail.module';
 import { AuthModule } from './lib/auth/auth.module';
 import { AuthFeatureModule } from './module/auth/auth.module';
 import { UserModule } from './module/user/user.module';
+import { HackathonModule } from './module/hackathon/hackathon.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserModule } from './module/user/user.module';
     AuthModule,
     AuthFeatureModule,
     UserModule,
+    HackathonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
